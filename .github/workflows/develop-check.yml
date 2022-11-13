@@ -1,0 +1,31 @@
+name : build + eslint
+
+# 이벤트를 발생시킬 트리거
+on:
+	pull_request: # pull request, push 등등 가능
+			branches: # branches로 지정할 수 있음
+				- develop 
+jobs: # 실행할 작업들! 병렬적으로 실행된다는걸 의식하자
+	check:
+		name: check 
+		runs-on: ubuntu-latest
+		steps:
+      - uses: actions/checkout@v3 
+      - name: Install client dependencies # client 폴더에서 npm 설치
+        run : |
+            cd client
+            npm install 
+      - name: Install server dependencies # server 폴더에서 npm 설치
+        run : |
+            cd server
+            npm install
+            
+      - name: Check eslint # eslint 돌리기
+        run : |
+            ./client/node_modules/.bin/eslint client/src --ext .js,.jsx
+            ./client/node_modules/.bin/eslint server --ext .js,.jsx
+            
+      - name: Run build check # 빌드 돌리기
+        run: |
+            cd client
+            npm run build
